@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: mcb
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mcb
+    username: postgres
+    password: juyel1997
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    show-sql: true
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+#
+#  main:
+#    allow-circular-references: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /mcb
+
+spring-doc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+
