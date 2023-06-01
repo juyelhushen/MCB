@@ -16,6 +16,7 @@
 	<description>MCB Test project</description>
     <modules>
         <module>backend</module>
+		<module>limit-login-security</module>
     </modules>
     <properties>
 		<java.version>11</java.version>

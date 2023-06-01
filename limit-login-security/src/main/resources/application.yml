@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: limit-login-attempts
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/mcb
+    username: root
+    password: *****
+#    driver-class-name: com.cj.mysql.jdbc.Driver
+    hikari:
+      connection-timeout: 20000
+      minimum-idle: 10
+      maximum-pool-size: 10
+      idle-timeout: 10000
+      max-lifetime: 1000
+      auto-commit: true
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+
+server:
+  port: 1000
