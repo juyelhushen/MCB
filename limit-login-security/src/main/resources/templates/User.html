@@ -13,7 +13,7 @@
   <div class="row mt-5">
     <div class="col-6 mx-auto">
       <h1>User Details</h1>
-      <div class="mt-2">Username: <span sec:authentication="principal.username"/></div>
+      <div class="mt-2">Email: <span sec:authentication="principal.username"/></div>
       <div class="mt-2"> Roles: <span sec:authentication="principal.authorities"/></div>
 
       <div class="mt-5"><a class="link-primary" th:href="@{/logout}">Logout</a></div>

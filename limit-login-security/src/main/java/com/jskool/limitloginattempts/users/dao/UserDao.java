@@ -8,10 +8,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Repository
 public interface UserDao extends JpaRepository<User,Long> {
         @Query("SELECT u FROM User u WHERE u.email =:email")
         User findUserByEmail(String email);
+
+        @Query("SELECT u FROM User u WHERE u.accountNonLocked = false AND u.lockTime < :currentTime")
+        List<User> findExpiredLockedUsers(@Param("currentTime") LocalDateTime currentTime);
 
 
         @Transactional

@@ -3,9 +3,9 @@ spring:
     name: limit-login-attempts
 
   datasource:
-    url: jdbc:mysql://localhost:3306/mcb
+    url: jdbc:mysql://localhost:3306/mysqltest
     username: root
-    password: *****
+    password: 8899
 #    driver-class-name: com.cj.mysql.jdbc.Driver
     hikari:
       connection-timeout: 20000

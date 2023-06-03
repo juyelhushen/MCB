@@ -27,7 +27,6 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         User user = userDetails.getUser();
 
         if (user.getFailedAttempt() > 0) {
-            System.out.println("i am in suucess auuth handle-"+user.getEmail());
             userService.resetFailedAttempts(user.getEmail());
         }
 

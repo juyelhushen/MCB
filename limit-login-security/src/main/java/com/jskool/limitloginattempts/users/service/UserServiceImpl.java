@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
     public static final int MAX_FAILED_ATTEMPTS = 3;  //limit attempt
 
-    public static final long LOCK_TIME_DURATION = 300000;  //10 min
+    public static final long LOCK_TIME_DURATION = 300000;  //5 min
 
     @Autowired
     private final UserDao userDao;
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void unlockUser(User user) {
+    public boolean unlockUser(User user) {
         LocalDateTime lockTime = user.getLockTime();
         if (lockTime != null) {
             long lockTimeInMills = lockTime.toInstant(ZoneOffset.UTC).toEpochMilli();
@@ -81,18 +81,25 @@ public class UserServiceImpl implements UserService {
 
             System.out.println(currentTimeMillis + " > " + unlockTimeMillis);
             if (currentTimeMillis > unlockTimeMillis) {
-                System.out.println("dsjbfjhbfjdsh");
                 user.setAccountNonLocked(true);
                 user.setLockTime(null);
                 user.setFailedAttempt(0);
                 userDao.save(user);
             }
+            return true;
         }
+        return false;
     }
 
     @Override
     public void resetFailedAttempts(String email) {
         System.out.println(email);
         userDao.updateFailedAttempt(0, email);
+    }
+
+    @Override
+    public List<User> getExpiredLockedUsers() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        return userDao.findExpiredLockedUsers(currentTime);
     }
 }

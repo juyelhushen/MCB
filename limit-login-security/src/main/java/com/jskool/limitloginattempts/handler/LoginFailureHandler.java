@@ -32,14 +32,15 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
                     userService.increaseFailedAttempts(user);
                 } else {
                     userService.lockUser(user);
-                    exception = new LockedException("Your account has been locked due to 3 failed attempts" +
-                            ". It will be unlocked after 24 hours");
+                    exception = new LockedException("Account is locked since you have exceeded the number of trials.");
                     request.getSession().setAttribute("lockedExceptionMessage", exception.getMessage());
                 }
             } else if (!user.isAccountNonLocked()) {
-                userService.unlockUser(user);
-                exception = new LockedException("Your account has been unlocked. Please try to login again.");
-                request.getSession().setAttribute("lockedExceptionMessage", exception.getMessage());
+                boolean unlocked = userService.unlockUser(user);
+                if (unlocked) {
+                    exception = new LockedException("Your account has been unlocked. Please try to login again.");
+                    request.getSession().setAttribute("lockedExceptionMessage", exception.getMessage());
+                }
             }
         }
 
