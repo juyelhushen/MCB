@@ -15,5 +15,4 @@ public class LimitLoginAttemptsApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LimitLoginAttemptsApplication.class, args);
 	}
-
 }

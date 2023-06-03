@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -85,8 +84,8 @@ public class UserServiceImpl implements UserService {
                 user.setLockTime(null);
                 user.setFailedAttempt(0);
                 userDao.save(user);
-            }
             return true;
+            }
         }
         return false;
     }
