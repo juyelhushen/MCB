@@ -1,37 +1,44 @@
 pipeline {
+    environment {
+        dockerImageName = "juyel8968/mcb"
+        dockerImage = ""
+        registryCredential = 'dockerhub'
+        containerName = 'mcbcontainer'
+        containerPort = 8080
+        hostPort = 8080
+    }
     agent any
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Source') {
             steps {
-                // Checkout the source code from GitHub
-                git url: 'https://github.com/juyelhushen/MCB.git'
+                git credentialsId: 'github', url: 'https://github.com/juyelhushen/MCB.git'
             }
         }
-        stage('Docker Build') {
+        stage('Build image') {
             steps {
-                // Build the Docker image
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                    sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                    sh 'docker build -t juyel8968/mcb .'
+                script {
+                    dockerImage = docker.build dockerImageName
                 }
             }
         }
-
-        stage('Docker Push') {
+        stage('Pushing Image') {
             steps {
-                // Push the Docker image to DockerHub
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
-                    sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
-                    sh 'docker push juyel8968/mcb'
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        dockerImage.push("latest")
+                    }
                 }
             }
         }
-
-        stage('Docker Run') {
+        stage('Create Container') {
             steps {
-                // Create and run the Docker container
-                sh 'docker run -d --name mcbcontainer -p 8080:8080 juyel8968/mcb'
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        docker.container(dockerImageName).withRun('-d -p ${hostPort}:${containerPort} --name ${containerName}') {
+                            // Container creation steps if any
+                        }
+                    }
+                }
             }
         }
     }
