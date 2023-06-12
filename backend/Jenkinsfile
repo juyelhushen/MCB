@@ -1,8 +1,6 @@
 pipeline {
     environment {
-        dockerImageName = "juyel8968/mcb"
-        dockerImage = ""
-        registryCredential = 'dockerhub'
+        dockerImageName = 'juyel8968/mcb-project'
         containerName = 'mcbcontainer'
         containerPort = 8080
         hostPort = 8080
@@ -14,18 +12,17 @@ pipeline {
                 git credentialsId: 'github', url: 'https://github.com/juyelhushen/MCB.git'
             }
         }
-        stage('Build image') {
+        stage('Build') {
             steps {
-                script {
-                    dockerImage = docker.build dockerImageName, "-f ./Dockerfile ."
-                }
+                sh 'mvn clean package'
             }
         }
-        stage('Pushing Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        dockerImage.push("latest")
+                    docker.build("${dockerImageName}:${env.BUILD_NUMBER}", '-f Dockerfile .')
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+                        docker.image("${dockerImageName}:${env.BUILD_NUMBER}").push()
                     }
                 }
             }
@@ -33,10 +30,8 @@ pipeline {
         stage('Create Container') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-                        docker.container(dockerImageName).withRun('-d -p ${hostPort}:${containerPort} --name ${containerName}') {
-                            // Container creation steps if any
-                        }
+                    docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials-id') {
+                        docker.run("${dockerImageName}:${env.BUILD_NUMBER}", "-d -p ${hostPort}:${containerPort} --name ${containerName}")
                     }
                 }
             }
