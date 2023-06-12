@@ -1,36 +1,42 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Checkout') {
-            steps {
-                // Checkout the source code from GitHub
-                git url: 'https://github.com/juyelhushen/MCB.git'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                // Build the Maven project
-                script {
-                    def mvnHome = tool 'MAVEN_ENV'
-                    sh "${mvnHome}/bin/mvn ${MAVEN_ARGS}"
-                }
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                // Build the Docker image
-                sh 'docker build -t mcb .'
-            }
-        }
-
-        stage('Docker Run') {
-            steps {
-                // Create and run the Docker container
-                sh 'docker run -d --name mcbcontainer -p 8080:8080 mcb'
-            }
-        }
+  environment {
+    dockerimagename = "juyel8968/mcb"
+    dockerImage = "mcb"
+  }
+  agent any
+  stages {
+    stage('Checkout Source') {
+      steps {
+        git credentialsId: 'github', url: 'https://github.com/juyelhushen/MCB.git'
+      }
     }
+    stage('Build image') {
+      steps{
+        script {
+          dockerImage = docker.build dockerimagename
+        }
+      }
+    }
+    stage('Pushing Image') {
+      environment {
+        registryCredential = 'dockerhub'
+      }
+      steps{
+        script {
+          docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+            dockerImage.push("latest")
+          }
+        }
+      }
+    }
+    stage('Create Docker Container') {
+      steps {
+        script {
+          docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+            dockerImage.run("-p 8080:8080 --name mycontainer")
+          }
+        }
+      }
+    }
+  }
 }
