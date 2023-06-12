@@ -1,31 +1,33 @@
 pipeline {
     agent any
-  environment {
-    MAVEN_ARGS=" -e clean install"
-    registry = ""
-    dockerContainerName = 'mcb'
-    dockerImageName = 'mcb'
-  }
-  stages {
-    stage('Build') {
-       steps {
-   withMaven(maven: 'MAVEN_ENV') {
-            sh "mvn ${MAVEN_ARGS}"
-        }
-       }
-    }
 
- stage('clean container') {
-      steps {
-       sh 'docker ps -f name=${dockerContainerName} -q | xargs --no-run-if-empty docker container stop'
-       sh 'docker container ls -a -fname=${dockerContainerName} -q | xargs -r docker container rm'
-       sh 'docker images -q --filter=reference=${dockerImageName} | xargs --no-run-if-empty docker rmi -f'
-      }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from GitHub
+                git 'https://github.com/juyelhushen/MCB.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the Maven project
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                // Build the Docker image
+                sh 'docker build -t mcb .'
+            }
+        }
+
+        stage('Docker Run') {
+            steps {
+                // Create and run the Docker container
+                sh 'docker run -d --name mcbcontainer -p 8080:8080 mcb'
+            }
+        }
     }
-  stage('docker-compose start') {
-      steps {
-       sh 'docker compose up -d'
-      }
-    }
-  }
 }
