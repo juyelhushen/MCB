@@ -20,7 +20,7 @@ pipeline {
         stage('Build and Push Docker Image') {
             steps {
                 script {
-                    docker.build("${dockerImageName}:${env.BUILD_NUMBER}", '-f Dockerfile .')
+                    docker.build("${dockerImageName}:${env.BUILD_NUMBER}", '-f backend/src/Dockerfile .')
                     docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
                         docker.image("${dockerImageName}:${env.BUILD_NUMBER}").push()
                     }
