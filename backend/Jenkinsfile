@@ -1,7 +1,7 @@
 pipeline {
   environment {
     dockerimagename = "juyel8968/mcb"
-    dockerImage = "mcb"
+    dockerImage = ""
   }
   agent any
   stages {
