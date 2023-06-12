@@ -1,0 +1,6 @@
+com\mcb\junit\service\GroupServiceComponentTest.class
+com\mcb\McbApplicationTests.class
+com\mcb\junit\service\SubjectServiceComponentTest.class
+com\mcb\junit\service\MarkServiceComponentTest.class
+com\mcb\junit\service\TeacherServiceComponentTest.class
+com\mcb\junit\service\StudentServiceComponentTest.class

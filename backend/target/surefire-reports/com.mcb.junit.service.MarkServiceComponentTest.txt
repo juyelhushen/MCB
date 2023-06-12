@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.mcb.junit.service.MarkServiceComponentTest
+-------------------------------------------------------------------------------
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.696 s - in com.mcb.junit.service.MarkServiceComponentTest
