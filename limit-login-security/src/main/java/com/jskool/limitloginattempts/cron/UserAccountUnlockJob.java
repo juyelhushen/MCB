@@ -15,7 +15,7 @@ public class UserAccountUnlockJob {
 
     private final UserService userService;
 
-    @Scheduled(cron = "0 */5 * * * *")   //Every five minutes after it's going to execute
+    @Scheduled(cron = "0 */2 * * * *")   //Every five minutes after it's going to execute
     public void unlockUserAccount() {
         List<User> lockedUsers = userService.getExpiredLockedUsers();
         for (User user : lockedUsers) {

@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    image: mcb
+    ports:
+      - '8080:8080'
+    container_name: mcb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mcb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    links:
+      - 'db:database'
+  db:
+    image: postgres:15.2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mcb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - 6432:5432
+volumes:
+  db-data:
+    driver: local

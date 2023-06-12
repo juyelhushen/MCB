@@ -104,6 +104,7 @@
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>mcb</finalName>
     </build>
 
 </project>

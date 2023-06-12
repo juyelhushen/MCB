@@ -78,7 +78,6 @@ public class UserServiceImpl implements UserService {
             long currentTimeMillis = LocalDateTime.now().atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
             long unlockTimeMillis = lockTimeInMills + LOCK_TIME_DURATION;
 
-            System.out.println(currentTimeMillis + " > " + unlockTimeMillis);
             if (currentTimeMillis > unlockTimeMillis) {
                 user.setAccountNonLocked(true);
                 user.setLockTime(null);

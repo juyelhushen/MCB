@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+  environment {
+    MAVEN_ARGS=" -e clean install"
+    registry = ""
+    dockerContainerName = 'limitloginContainer'
+    dockerImageName = 'limitlogin'
+  }
+  stages {
+    stage('Build') {
+       steps {
+   withMaven(maven: 'MAVEN_ENV') {
+            sh "mvn ${MAVEN_ARGS}"
+        }
+       }
+    }
+
+ stage('clean container') {
+      steps {
+        script {
+          dockerImage = docker.build limitlogin
+        }
+    }
+  stage('docker container create') {
+      steps {
+       sh 'docker run -d --name limitloginContainer -p 1000:1000 limitlogin'
+      }
+    }
+  }
+}
