@@ -1,42 +1,38 @@
 pipeline {
-  environment {
-    dockerimagename = "juyel8968/mcb"
-    dockerImage = ""
-  }
-  agent any
-  stages {
-    stage('Checkout Source') {
-      steps {
-        git credentialsId: 'github', url: 'https://github.com/juyelhushen/MCB.git'
-      }
-    }
-    stage('Build image') {
-      steps{
-        script {
-          dockerImage = docker.build dockerimagename, "-f backend/Dockerfile ."
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the source code from GitHub
+                git url: 'https://github.com/juyelhushen/MCB.git'
+            }
         }
-      }
-    }
-    stage('Pushing Image') {
-      environment {
-        registryCredential = 'dockerhub'
-      }
-      steps{
-        script {
-          docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-            dockerImage.push("latest")
-          }
+        stage('Docker Build') {
+            steps {
+                // Build the Docker image
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
+                    sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                    sh 'docker build -t juyel8968/mcb .'
+                }
+            }
         }
-      }
-    }
-    stage('Create Docker Container') {
-      steps {
-        script {
-          docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
-            dockerImage.run("-p 8080:8080 --name mycontainer")
-          }
+
+        stage('Docker Push') {
+            steps {
+                // Push the Docker image to DockerHub
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'DOCKERHUB_PASSWORD', usernameVariable: 'DOCKERHUB_USERNAME')]) {
+                    sh "docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_PASSWORD}"
+                    sh 'docker push juyel8968/mcb'
+                }
+            }
         }
-      }
+
+        stage('Docker Run') {
+            steps {
+                // Create and run the Docker container
+                sh 'docker run -d --name mcbcontainer -p 8080:8080 juyel8968/mcb'
+            }
+        }
     }
-  }
 }
