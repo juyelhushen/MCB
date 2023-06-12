@@ -5,7 +5,17 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the source code from GitHub
-                git 'https://github.com/juyelhushen/MCB.git'
+                git url: 'https://github.com/juyelhushen/MCB.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the Maven project
+                script {
+                    def mvnHome = tool 'MAVEN_ENV'
+                    sh "${mvnHome}/bin/mvn ${MAVEN_ARGS}"
+                }
             }
         }
 
